@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btnHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HISTORY"
+        android:textStyle="bold"
+        android:background="@android:color/transparent"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SETTINGS"
+        android:textStyle="bold"
+        android:background="@android:color/transparent"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/inputArea"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:imeOptions="actionDone"
+        android:maxLines="5"
+        android:scrollbars="vertical"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/resultText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnHistory"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/resultText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintBottom_toTopOf="@+id/keypadGrid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputArea" />
+
+    <GridLayout
+        android:id="@+id/keypadGrid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:columnCount="4"
+        android:rowCount="3"
+        android:alignmentMode="alignMargins"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button style="@style/KeypadButton" android:text="+" android:tag="+" />
+        <Button style="@style/KeypadButton" android:text="-" android:tag="-" />
+        <Button style="@style/KeypadButton" android:text="*" android:tag="*" />
+        <Button style="@style/KeypadButton" android:text="/" android:tag="/" />
+
+        <Button style="@style/KeypadButton" android:text="sin" android:tag="sin(" />
+        <Button style="@style/KeypadButton" android:text="cos" android:tag="cos(" />
+        <Button style="@style/KeypadButton" android:text="tan" android:tag="tan(" />
+        <Button style="@style/KeypadButton" android:text="ctg" android:tag="cot(" />
+
+        <Button style="@style/KeypadButton" android:text="(" android:tag="(" />
+        <Button style="@style/KeypadButton" android:text=")" android:tag=")" />
+        <Button style="@style/KeypadButton" android:text="^" android:tag="^" />
+        <Button style="@style/KeypadButton" android:text="√" android:tag="sqrt(" />
+
+    </GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
