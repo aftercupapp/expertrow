@@ -27,11 +27,11 @@
         android:id="@+id/switchTheme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Dark Mode"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:padding="16dp"
+        android:text="Dark mode"
         android:textColor="?attr/colorOnBackground"
-        android:padding="16dp"/>
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtVersion"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:gravity="start"
-        android:text="Version: 1.2 (E-Paper Edition)\nBuild: Offline Calc"
+        android:text="Version: 0.1"
         android:textColor="?attr/colorOnBackground"
         android:textSize="18sp"
         android:lineSpacingExtra="6dp"
