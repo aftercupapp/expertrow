@@ -7,11 +7,13 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.Switch
 import android.widget.TextView
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputArea: EditText
     private lateinit var resultText: TextView
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var keypadContainer: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,19 +41,25 @@ class MainActivity : AppCompatActivity() {
 
         inputArea = findViewById(R.id.inputArea)
         resultText = findViewById(R.id.resultText)
+        keypadContainer = findViewById(R.id.keypadContainer)
+
         val btnHistory = findViewById<Button>(R.id.btnHistory)
         val btnSettings = findViewById<Button>(R.id.btnSettings)
-        val keypadGrid = findViewById<GridLayout>(R.id.keypadGrid)
+        val btnToggleKeypad = findViewById<Button>(R.id.btnToggleKeypad)
+        val keypadGridBasic = findViewById<GridLayout>(R.id.keypadGridBasic)
+        val keypadGridAdvanced = findViewById<GridLayout>(R.id.keypadGridAdvanced)
 
         inputArea.requestFocus()
         inputArea.showSoftInputOnFocus = true
+
+        applySettings() // Checks if keypad should be entirely hidden
 
         inputArea.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                 actionId == EditorInfo.IME_ACTION_NEXT ||
                 (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
                 performCalculation()
-                return@setOnEditorActionListener true // Return true to prevent inserting a new line
+                return@setOnEditorActionListener true
             }
             false
         }
@@ -58,7 +67,20 @@ class MainActivity : AppCompatActivity() {
         btnHistory.setOnClickListener { showFullscreenHistory() }
         btnSettings.setOnClickListener { showFullscreenSettings() }
 
-        for (child in keypadGrid.children) {
+        // --- MORE/LESS SYMBOLS LOGIC ---
+        btnToggleKeypad.setOnClickListener {
+            if (keypadGridAdvanced.visibility == View.VISIBLE) {
+                keypadGridAdvanced.visibility = View.GONE
+                btnToggleKeypad.text = "MORE SYMBOLS"
+            } else {
+                keypadGridAdvanced.visibility = View.VISIBLE
+                btnToggleKeypad.text = "LESS SYMBOLS"
+            }
+        }
+
+        // Attach listeners to ALL buttons in both grids
+        val allButtons = keypadGridBasic.children + keypadGridAdvanced.children
+        for (child in allButtons) {
             if (child is Button) {
                 child.setOnClickListener {
                     val tagToAppend = child.tag.toString()
@@ -66,6 +88,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun applySettings() {
+        // Default to true if not found
+        val showKeypad = sharedPreferences.getBoolean("show_keypad_setting", true)
+        keypadContainer.visibility = if (showKeypad) View.VISIBLE else View.GONE
     }
 
     private fun appendToInput(textToAppend: String) {
@@ -88,8 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun performCalculation() {
-        // Remove newlines (\n) so multi-line text doesn't break the calculator
-        val rawInput = inputArea.text.toString().replace("\n", "").trim()
+        val rawInput = inputArea.text.toString().replace("\n", "").replace(",", ".").trim()
         if (rawInput.isEmpty()) return
 
         var expressionStr = rawInput.replace(Regex("(?<=\\d)(?=[x(a-z])"), "*")
@@ -114,7 +141,6 @@ class MainActivity : AppCompatActivity() {
                 val result = expression.evaluate()
                 displayResult(rawInput, result, isEquation = false)
             }
-
         } catch (e: Exception) {
             resultText.text = "Error"
         }
@@ -176,7 +202,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 resultText.text = "No Solution"
             }
-
         } catch (e: Exception) {
             resultText.text = "Solver Error"
         }
@@ -253,8 +278,10 @@ class MainActivity : AppCompatActivity() {
         dialog.setContentView(dialogView)
 
         val switchTheme = dialogView.findViewById<Switch>(R.id.switchTheme)
+        val switchShowKeypad = dialogView.findViewById<Switch>(R.id.switchShowKeypad)
         val btnClose = dialogView.findViewById<Button>(R.id.btnCloseSettings)
 
+        // Theme Toggle logic
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         switchTheme.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
 
@@ -264,10 +291,20 @@ class MainActivity : AppCompatActivity() {
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
+        }
+
+        // Keypad Master Toggle logic
+        switchShowKeypad.isChecked = sharedPreferences.getBoolean("show_keypad_setting", true)
+
+        switchShowKeypad.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("show_keypad_setting", isChecked).apply()
+        }
+
+        btnClose.setOnClickListener {
+            applySettings() // Applies changes instantly to the main screen when closed
             dialog.dismiss()
         }
 
-        btnClose.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 }

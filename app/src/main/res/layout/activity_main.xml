@@ -59,38 +59,67 @@
         android:gravity="center"
         android:textSize="32sp"
         android:textColor="?attr/colorOnBackground"
-        app:layout_constraintBottom_toTopOf="@+id/keypadGrid"
+        app:layout_constraintBottom_toTopOf="@+id/keypadContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputArea" />
 
-    <GridLayout
-        android:id="@+id/keypadGrid"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/keypadContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:columnCount="4"
-        android:rowCount="3"
-        android:alignmentMode="alignMargins"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <Button style="@style/KeypadButton" android:text="+" android:tag="+" />
-        <Button style="@style/KeypadButton" android:text="-" android:tag="-" />
-        <Button style="@style/KeypadButton" android:text="*" android:tag="*" />
-        <Button style="@style/KeypadButton" android:text="/" android:tag="/" />
+        <Button
+            android:id="@+id/btnToggleKeypad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="MORE SYMBOLS"
+            android:textSize="12sp"
+            android:background="@android:color/transparent"
+            android:textColor="?attr/colorOnBackground" />
 
-        <Button style="@style/KeypadButton" android:text="sin" android:tag="sin(" />
-        <Button style="@style/KeypadButton" android:text="cos" android:tag="cos(" />
-        <Button style="@style/KeypadButton" android:text="tan" android:tag="tan(" />
-        <Button style="@style/KeypadButton" android:text="ctg" android:tag="cot(" />
+        <GridLayout
+            android:id="@+id/keypadGridBasic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:rowCount="1"
+            android:alignmentMode="alignMargins">
+            <Button style="@style/KeypadButton" android:text="+" android:tag="+" />
+            <Button style="@style/KeypadButton" android:text="-" android:tag="-" />
+            <Button style="@style/KeypadButton" android:text="*" android:tag="*" />
+            <Button style="@style/KeypadButton" android:text="/" android:tag="/" />
+        </GridLayout>
 
-        <Button style="@style/KeypadButton" android:text="(" android:tag="(" />
-        <Button style="@style/KeypadButton" android:text=")" android:tag=")" />
-        <Button style="@style/KeypadButton" android:text="^" android:tag="^" />
-        <Button style="@style/KeypadButton" android:text="√" android:tag="sqrt(" />
+        <GridLayout
+            android:id="@+id/keypadGridAdvanced"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:rowCount="3"
+            android:visibility="gone"
+            android:alignmentMode="alignMargins">
+            <Button style="@style/KeypadButton" android:text="sin" android:tag="sin(" />
+            <Button style="@style/KeypadButton" android:text="cos" android:tag="cos(" />
+            <Button style="@style/KeypadButton" android:text="tan" android:tag="tan(" />
+            <Button style="@style/KeypadButton" android:text="ctg" android:tag="cot(" />
 
-    </GridLayout>
+            <Button style="@style/KeypadButton" android:text="(" android:tag="(" />
+            <Button style="@style/KeypadButton" android:text=")" android:tag=")" />
+            <Button style="@style/KeypadButton" android:text="^" android:tag="^" />
+            <Button style="@style/KeypadButton" android:text="√" android:tag="sqrt(" />
+
+            <Button style="@style/KeypadButton" android:text="=" android:tag="=" />
+            <Button style="@style/KeypadButton" android:text="log" android:tag="log(" />
+            <Button style="@style/KeypadButton" android:text="ln" android:tag="ln(" />
+            <Button style="@style/KeypadButton" android:text="x" android:tag="x" />
+        </GridLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
