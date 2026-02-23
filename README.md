@@ -7,7 +7,7 @@ Expert Row is built to eliminate ghosting and latency issues common on e-ink scr
 
 ## Gallery
 <p align="center">
-  <img src="https://i.postimg.cc/yxrWcdsv/Screenshot_20260214_181831.png" width="45%" />
+  <img src="https://i.postimg.cc/PJybSjvb/Screenshot_20260223_173346.png" width="45%" />
   <img src="https://i.postimg.cc/PJFNYxT6/Screenshot_20260214_181923.png" width="45%" />
 </p>
 <p align="center">
