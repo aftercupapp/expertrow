@@ -3,7 +3,7 @@
 A minimal, offline calculator application designed specifically for the Minimal Phone (MP01) and other Android e-paper devices.
 
 ## Description
-Expert Row is built to eliminate ghosting and latency issues common on e-ink screens. It features a high-contrast black-and-white interface, zero animations, and a large typography-focused layout. It functions as both a standard scientific calculator and an algebraic equation solver.
+Expert Row is built to eliminate ghosting and latency issues common on e-paper screens. It features a high-contrast black-and-white interface, zero animations, and a clean, typography-focused layout. It functions as both a standard scientific calculator and an algebraic equation solver.
 
 ## Gallery
 <p align="center">
