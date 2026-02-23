@@ -19,7 +19,11 @@ import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.children
+import com.google.android.material.button.MaterialButton
 import net.objecthunter.exp4j.ExpressionBuilder
 import net.objecthunter.exp4j.function.Function
 import kotlin.math.abs
@@ -30,11 +34,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputArea: EditText
     private lateinit var resultText: TextView
     private lateinit var sharedPreferences: SharedPreferences
+
     private lateinit var keypadContainer: LinearLayout
+    private lateinit var keypadGridBasic: GridLayout
+    private lateinit var keypadGridAdvanced: GridLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 1. The Classic Flag (Highly respected by E-ink Android forks)
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        // 2. Allow drawing into the camera cutout/notch area
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode =
+                android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+
         setContentView(R.layout.activity_main)
+
+        // 3. The Modern API (For standard Android 11+)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
 
         sharedPreferences = getSharedPreferences("ExpertRowData", Context.MODE_PRIVATE)
         loadHistory()
@@ -42,17 +65,17 @@ class MainActivity : AppCompatActivity() {
         inputArea = findViewById(R.id.inputArea)
         resultText = findViewById(R.id.resultText)
         keypadContainer = findViewById(R.id.keypadContainer)
+        keypadGridBasic = findViewById(R.id.keypadGridBasic)
+        keypadGridAdvanced = findViewById(R.id.keypadGridAdvanced)
 
         val btnHistory = findViewById<Button>(R.id.btnHistory)
         val btnSettings = findViewById<Button>(R.id.btnSettings)
         val btnToggleKeypad = findViewById<Button>(R.id.btnToggleKeypad)
-        val keypadGridBasic = findViewById<GridLayout>(R.id.keypadGridBasic)
-        val keypadGridAdvanced = findViewById<GridLayout>(R.id.keypadGridAdvanced)
 
         inputArea.requestFocus()
         inputArea.showSoftInputOnFocus = true
 
-        applySettings() // Checks if keypad should be entirely hidden
+        applySettings()
 
         inputArea.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
@@ -67,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         btnHistory.setOnClickListener { showFullscreenHistory() }
         btnSettings.setOnClickListener { showFullscreenSettings() }
 
-        // --- MORE/LESS SYMBOLS LOGIC ---
         btnToggleKeypad.setOnClickListener {
             if (keypadGridAdvanced.visibility == View.VISIBLE) {
                 keypadGridAdvanced.visibility = View.GONE
@@ -78,7 +100,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Attach listeners to ALL buttons in both grids
         val allButtons = keypadGridBasic.children + keypadGridAdvanced.children
         for (child in allButtons) {
             if (child is Button) {
@@ -89,11 +110,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun applySettings() {
-        // Default to true if not found
+        // Master Visibility Logic
         val showKeypad = sharedPreferences.getBoolean("show_keypad_setting", true)
         keypadContainer.visibility = if (showKeypad) View.VISIBLE else View.GONE
+
+        // Outline Logic
+        val outlineKeys = sharedPreferences.getBoolean("outline_keys_setting", true)
+        // Convert 2dp to pixels if true, otherwise 0px
+        val strokePx = if (outlineKeys) (2 * resources.displayMetrics.density).toInt() else 0
+
+        val allButtons = keypadGridBasic.children + keypadGridAdvanced.children
+        for (child in allButtons) {
+            // Because we use Material Components theme, buttons are MaterialButtons
+            if (child is MaterialButton) {
+                child.strokeWidth = strokePx
+            }
+        }
     }
 
     private fun appendToInput(textToAppend: String) {
@@ -116,6 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun performCalculation() {
+        // Handle newlines and swap commas to dots instantly
         val rawInput = inputArea.text.toString().replace("\n", "").replace(",", ".").trim()
         if (rawInput.isEmpty()) return
 
@@ -279,12 +313,12 @@ class MainActivity : AppCompatActivity() {
 
         val switchTheme = dialogView.findViewById<Switch>(R.id.switchTheme)
         val switchShowKeypad = dialogView.findViewById<Switch>(R.id.switchShowKeypad)
+        val switchOutlineKeys = dialogView.findViewById<Switch>(R.id.switchOutlineKeys)
         val btnClose = dialogView.findViewById<Button>(R.id.btnCloseSettings)
 
-        // Theme Toggle logic
+        // Theme Toggle
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         switchTheme.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -293,15 +327,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Keypad Master Toggle logic
+        // Keypad Visibility Toggle
         switchShowKeypad.isChecked = sharedPreferences.getBoolean("show_keypad_setting", true)
-
         switchShowKeypad.setOnCheckedChangeListener { _, isChecked ->
             sharedPreferences.edit().putBoolean("show_keypad_setting", isChecked).apply()
         }
 
+        // Keypad Outline Toggle
+        switchOutlineKeys.isChecked = sharedPreferences.getBoolean("outline_keys_setting", true)
+        switchOutlineKeys.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("outline_keys_setting", isChecked).apply()
+        }
+
         btnClose.setOnClickListener {
-            applySettings() // Applies changes instantly to the main screen when closed
+            applySettings() // Instantly apply visibility & outline settings when closing
             dialog.dismiss()
         }
 

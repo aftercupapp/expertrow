@@ -39,6 +39,15 @@
             android:text="Show symbols on main screen"
             android:textSize="18sp"
             android:textColor="?attr/colorOnBackground"
+            android:layout_marginBottom="24dp" />
+
+        <Switch
+            android:id="@+id/switchOutlineKeys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Outline symbol keys"
+            android:textSize="18sp"
+            android:textColor="?attr/colorOnBackground"
             android:layout_marginBottom="32dp" />
 
         <Space
@@ -49,7 +58,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Expert Row v0.2"
+            android:text="Version 0.2"
             android:textSize="14sp"
             android:gravity="left"
             android:textStyle="bold"
